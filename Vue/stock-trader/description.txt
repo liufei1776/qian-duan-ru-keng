@@ -1,0 +1,42 @@
+Stock trader
+
+功能：
+1. 在 stocks 页面（组件中），查看所有stock信息 和 购买
+2. 在 portfolio 页面（组件中），查看已买股票 和 售出。
+3. Home 页面（组件）和 header 中 可 查看 funds
+4. 点击 End day（股票交易截止，开启新一天） ，可以 改变（随机）股票价格
+5. Save & load 可以保存和下载 股票信息
+
+6. 2 * '3' = 6. 为了规范，还是将 input value 转换成 number
+
+技术要点：
+1. 组件设计
+    Stocks.vue
+        stock.vue // list stocks you can buy
+    Portfolio.vue 
+        stock.vue  // save stocks you have bought
+    Home.vue
+    Header.vue
+
+2. vue router
+    Home: '/'
+    Stocks : '/stocks'
+    Portfolio: '/portfolio'
+
+3. vuex
+    global-store.js
+    global-actions.js
+    modules
+        portfolio.js // state, mutations, actions, getters
+        stocks.js // state, mutations, actions, getters
+
+4. vue resource
+    firebase server // 访问google受限
+
+
+5. animation
+
+
+
+
+

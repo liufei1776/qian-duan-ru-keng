@@ -1,0 +1,80 @@
+.blood-compare
+{
+    display: flex;
+    justify-content: space-around;
+
+    width: 600px;
+    margin: 0 auto 10px;
+}
+
+.player
+{
+    width: 200px;
+}
+
+.player>header
+{
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.blood-bar
+{
+    width: 100%;
+    background: #ddd;
+}
+
+.blood-rest
+{
+    height: 30px; 
+    color: white;
+    background: green;
+    text-align: center;
+    font-weight: bold;
+    line-height: 30px;
+
+    /*motion effect when width changed*/
+    transition: width 500ms;  
+}
+
+.controls
+{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 600px;
+    height: 50px;
+    margin: 0 auto 10px;
+    border: 1px solid #ccc;
+    box-shadow: #ddd 3px 3px; 
+}
+
+
+.fight-data
+{
+    width: 600px;
+    padding: 10px;
+    margin: 10px auto 0;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.fight-data ul, .fight-data li
+{
+    padding: 0;
+    list-style: none;
+}
+
+.player-data
+{
+    color: blue;
+    background-color: lightblue;
+}
+
+.monster-data
+{
+    color: red;
+    background-color: lightcoral
+}
