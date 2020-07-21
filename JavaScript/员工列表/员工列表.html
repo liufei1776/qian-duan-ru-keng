@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>员工列表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body
+        a{
+            text-decoration: none;
+            color: #0d3a4b;
+        }
+        .active{
+            color: #ffffff;
+        }
+
+        .wrap {
+            width: 700px;
+            height: 500px;
+            background-image: url(./images/bg.png);
+            background-repeat: no-repeat;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .wrap #table {
+            width: 460px;
+            border-radius: 12px;
+            position: absolute;
+            left: 50%;
+            top: 160px;
+            transform: translateX(-50%);
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .wrap #table thead {
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            color: #fff;
+            background: #4cbfe5;
+        }
+
+        .wrap #table thead a {
+            color: #fff;
+        }
+
+        .wrap #table tbody {
+            color: #19c2ff;
+        }
+
+        .wrap #table tbody a {
+            color: #19c2ff;
+        }
+
+        .wrap #table tbody tr {
+            background: #fff;
+        }
+
+        .ctrl {
+            position: absolute;
+            left: 200px;
+            top: 100px;
+        }
+
+        .ctrl div {
+            width: 300px;
+            line-height: 30px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="ctrl">
+        <div class="age_sort nu">
+            <a href="javascript:;">年龄从小到大</a>
+            <a href="javascript:;">年龄从大到小</a>
+            <a href="javascript:;" class="active">默认排序</a>
+        </div>
+        <div class="gender_show">
+            <a href="javascript:;">只显示男性</a>
+            <a href="javascript:;">只显示女性</a>
+            <a href="javascript:;" class="active">默认</a>
+        </div>
+    </div>
+    <table id="table">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>性别</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- <tr>
+                <th>0</th>
+                <th>小明</th>
+                <th>24</th>
+                <th>男</th>
+            </tr>      -->
+        </tbody>
+    </table>
+</div>
+<script>
+
+// 数据    
+let data = [
+    {
+        id: 0,
+        name: '小明',
+        age: 24,
+        gender: '男'
+    },
+    {
+        id: 1,
+        name: '小芳',
+        age: 30,
+        gender: '女'
+    },
+    {
+        id: 2,
+        name: '小美',
+        age: 31,
+        gender: '女'
+    },
+    {
+        id: 3,
+        name: '小刚',
+        age: 21,
+        gender: '男'
+    },
+    {
+        id: 4,
+        name: '小琪',
+        age: 18,
+        gender: '女'
+    }
+];
+
+
+// 获取dom元素
+let ageSort = document.querySelectorAll(".age_sort a");
+let genderShow = document.querySelectorAll(".gender_show a");
+let tbody = document.querySelector("#table tbody");
+
+
+// 用户按age排序，状态码
+//   0 - 升序
+//   1 - 降序
+//   2 - 默认，不排序
+let sortChoice = 2;
+
+// function: 按年龄排序
+// parameters:  
+//   1. data - 被排列的数据  
+//   2. sortCallback - sort方法的回调函数
+// return : 排序后的数组
+let sortByAge = (data, sortCallback) => {
+    return data.sort(sortCallback);
+}
+
+// Sort callbacks: 根据用户选择，产生相应的 callback，供 sortByAge 函数使用
+let sortCallbacks = [
+    // age升序排序
+    (item1, item2) => item1.age - item2.age , 
+    // age降序排序
+    (item1, item2) => item2.age - item1.age ,
+    // 默认排序，即按id排序
+    (item1, item2) => item1.id - item2.id
+
+];
+
+
+
+// 用户按gender筛选，状态码
+//   0 - 男
+//   1 - 女
+//   2 - 默认，不筛选
+let filterChoice = 2;
+
+// function: 按性别筛选
+// parameters:
+//   1. data - 被筛选的数据
+//   2. filterCallback - filter方法的回调函数 
+// return: 筛选后的数组
+let filterByGender = (data, filterCallback) => {
+    return data.filter(filterCallback);
+}
+
+// Filter Callbacks: 根据用户选择，产生相应的 callback， 供 filterByGender 函数使用
+let filterCallbacks = [
+    // 按男性筛选
+    item => item.gender == '男' ,
+    // 按女性筛选
+    item => item.gender == '女' ,
+    // 默认，不筛选
+    item => true  
+];
+
+
+
+
+// function: 根据用户选择，产生最终显示的数据
+// parameters:
+//   1. 原始数据集
+//   2. 排序状态码
+//   3. 筛选状态码
+// return: 最终显示的数据集
+let createTableData = (data, sortChoice = 2, filterChoice = 2 ) => {
+     // 先筛后排
+     let newData = filterByGender(data, filterCallbacks[filterChoice]);
+     newData = sortByAge(newData, sortCallbacks[sortChoice]);
+     
+     return newData;
+}
+
+
+
+// function: 页面渲染函数
+// parameters: none
+// return: none
+let render = () => {
+    let tableData = createTableData(data, sortChoice, filterChoice);
+
+    switchActiveStyle(ageSort, sortChoice);
+    switchActiveStyle(genderShow, filterChoice);
+
+    tbody.innerHTML = tableData.map( el => `
+        <tr>
+            <th>${el.id}</th>
+            <th>${el.name}</th>
+            <th>${el.age}</th>
+            <th>${el.gender}</th>
+        </tr>
+    `).join('');
+}
+
+// function : 切换 active 类样式
+const STYLE_CLASS_ACTIVE = "active";
+let switchActiveStyle = (nodeList, activeIndex) => {
+    nodeList.forEach( el => {
+        el.classList.remove(STYLE_CLASS_ACTIVE);
+    });
+    nodeList[activeIndex].classList.add(STYLE_CLASS_ACTIVE);
+}
+
+
+
+// 用户排序点击事件
+ageSort.forEach((el, index) => {
+    el.onclick = () => {
+        sortChoice = index;
+        render();
+    }
+});
+
+
+// 用户筛选点击事件 
+genderShow.forEach((el, index) => {
+    el.onclick = () => {
+        filterChoice = index;
+        render();
+    }
+});
+
+
+// 页面初始加载需渲染一次才能显示数据
+window.onload = () => { render(); }
+
+
+
+
+
+</script>
+</body>
+</html>

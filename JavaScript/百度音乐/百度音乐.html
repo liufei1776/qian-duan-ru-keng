@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <link rel="stylesheet" href="./index.css" />
+</head>
+
+<body>
+  <section id="wrap">
+    <h2 class="title">百度音乐榜单</h2>
+    <nav>
+      <a href="javascript:;" id="onlyCollect">只显示收藏内容</a> 
+      <a href="javascript:;" id="onlyNonCollect">只显示未收藏内容</a>  
+      <a href="javascript:;" id="allMusic" class="active">全部榜单</a>
+   </nav>
+    <ul id="list">
+      <!-- <li>
+          <input type="checkbox" />
+          <span>第一条信息</span>
+          <a href="javascript:;" class="collect">收藏</a>
+          <a href="javascript:;" class="cancelCollect">取消收藏</a>
+          <a href="javascript:;" class="remove">删除</a>
+        </li> -->
+    </ul>
+    <footer class="footer">
+      <label><input type="checkbox" id="checkAll" />全选/全不选</label>
+      <a href="javascript:;" id="remove">删除</a>
+      <input type="text" id="newInfo" />
+      <a href="javascript:;" id="add">添加</a>
+    </footer>
+  </section>
+  <script>
+
+    // 数据集
+    let idCounter = 0; 
+    let data = [
+      {
+        id: idCounter++,
+        txt: "残酷月光 - 费启鸣",
+        checked: false,
+        collect: false
+      }, {
+        id: idCounter++,
+        txt: " 兄弟 - 艾热",
+        checked: false,
+        collect: false
+      }
+    ];
+     
+
+    // DOM 对象
+    let musicList = document.getElementById("list");
+    let buttonAddNewMusic = document.getElementById("add");
+    let textNewMusic = document.getElementById("newInfo");
+    let checkAll = document.getElementById("checkAll");  // 全选/全不选
+    let removeSome = document.getElementById("remove");  // 批量删除
+    let showCollect = document.getElementById('onlyCollect');
+    let showNonCollect = document.getElementById('onlyNonCollect');
+    let showAllMusic = document.getElementById('allMusic');
+
+
+    const SHOW_COLLECT = 0;
+    const SHOW_NON_COLLECT = 1;
+    const SHOW_ALL = 2;
+    let showType = SHOW_ALL; // default
+
+    function createData(type) {
+      switch(type) {
+        case SHOW_ALL:
+          return data;
+        case SHOW_COLLECT:
+          return data.filter( el => el.collect == true );
+        case SHOW_NON_COLLECT:
+          return data.filter( el => el.collect == false );
+        default:
+          return data;
+      }
+    }  
+
+    
+    // 只显示收藏/非收藏
+    showCollect.onclick = function() {
+      showType = SHOW_COLLECT;
+      render(createData(showType));
+    }
+    
+    showNonCollect.onclick = function() {
+      showType = SHOW_NON_COLLECT
+      render(createData(showType));
+    }
+
+    // 显示全部音乐
+    showAllMusic.onclick = function() {
+      showType = SHOW_ALL;
+      render(createData(showType));
+    }
+
+    function switchActiveStyle(showType) {
+      let list = document.querySelectorAll("nav a");
+      list.forEach( el => {
+        el.classList.remove('active')
+      } );
+
+      list[showType].classList.add('active');
+    }
+
+
+    // 将改动（如 选中，收藏，删除等）更新到 data 中
+    function updateToData(partData) {
+      partData.forEach( el => {
+          // 根据id比对更新
+          data.forEach( item => {
+            if( item.id == el.id ) {
+              item.checked = el.checked;
+              item.collect = el.collect;
+            }
+          })
+      } ); 
+    }
+
+
+
+
+    // 页面初始化后需渲染一次
+    window.onload = function() {
+      console.log('window - render')
+      render(createData(showType));
+    }
+
+
+
+    // function: 渲染dom
+    function render(data) {
+      console.log('render', data);
+
+      musicList.innerHTML = data.map( el=> {
+        // 若已经收藏，则不显示收藏功能
+        if(el.collect) {
+          return `
+          <li data-id="${el.id}">
+            <input type="checkbox"  ${el.checked ? 'checked' : ''} />
+            <span>${el.txt}</span>
+            <a href="javascript:;" class="cancelCollect">取消收藏</a>
+            <a href="javascript:;" class="remove">删除</a>
+          </li>`
+        }
+        else {
+          return `
+          <li data-id="${el.id}">
+            <input type="checkbox"  ${el.checked ? 'checked' : ''} />
+            <span>${el.txt}</span>
+            <a href="javascript:;" class="collect">收藏</a>
+            <a href="javascript:;" class="remove">删除</a>
+          </li>`
+
+        }
+    }).join('');
+
+       // check all status
+       // 只会改变 checked ，但不会触发 onchange事件
+       checkAll.checked = data.length==0 ? false : data.every( el => el.checked );
+
+       switchActiveStyle(showType);
+      
+    }
+
+
+
+    // 添加新音乐功能
+    buttonAddNewMusic.onclick = function() {
+      addNewMusic();
+    }
+
+    // function: 添加新音乐
+    function addNewMusic() {
+      if(isVaildInput()) {
+        let txt = textNewMusic.value.trim();
+        
+        // 新数据永远添加到 原始数据中
+        data.push({
+          id: idCounter++,
+          txt: txt,
+          checked: false,
+          collect: false
+        });
+
+        textNewMusic.value = '';
+        showType = SHOW_ALL; 
+
+        console.log('add - render');
+        render(createData(showType));
+      }
+    }
+
+    // 检查用户输入合法性
+    function isVaildInput() {
+      let regex = /^\s*$/;
+      if(regex.test(textNewMusic.value)) {
+        alert("请输入有效内容");
+        return false;
+      }
+      return true;
+    }
+
+
+
+    // 勾选音乐功能 
+    // 利用事件冒泡
+    musicList.onchange = function(e) {
+      console.log('change', e.target);
+      
+      // 改变数据
+      let currentLi = e.target.parentNode;
+      console.log('change', currentLi.dataset.id, e.target.checked);
+      changeChecked(currentLi.dataset.id, e.target.checked);
+      
+
+
+      // 建议 在 changeChecked 中 render
+      // console.log('change - render');
+      // render();
+    }
+
+    function changeChecked(id, checked) {
+      let partData = createData(showType);
+
+      partData.forEach((el)=>{
+        if(el.id == id) {
+          el.checked = checked;
+        }
+      });
+
+      updateToData(partData);
+      
+      console.log('change - render');
+      render(partData);
+    }
+
+
+    // // 全选-全部选 功能
+    checkAll.onchange = function() {
+      let partData = createData(showType);
+
+      if(partData.length == 0) {
+        alert("当前页面没有任何记录");
+      }
+      else {
+        partData.forEach(el=>{
+          el.checked = checkAll.checked;
+        });
+        updateToData(partData);
+      }
+
+      render(partData);
+    }
+
+
+    // 删除当前音乐功能
+    // 利用事件冒泡
+    musicList.onclick = function(e) {
+      
+      console.log('click', e.target);
+
+      // 删除当前音乐
+      // 确定事件源 - 删除按钮
+      if(e.target.tagName == 'A' && e.target.className == 'remove') {
+        let currentId = e.target.parentNode.dataset.id;
+        console.log('remove', currentId);
+        removeMusicItem(currentId);
+      }
+
+
+      // 收藏音乐
+      if(e.target.tagName == 'A' && e.target.className == 'collect') {
+        let currentId = e.target.parentNode.dataset.id;
+        console.log('collect', currentId);
+        collectMusicItem(currentId, true);
+      } 
+
+      // 收藏音乐
+      if(e.target.tagName == 'A' && e.target.className == 'cancelCollect') {
+        let currentId = e.target.parentNode.dataset.id;
+        console.log('collect', currentId);
+        collectMusicItem(currentId, false);
+      }
+
+
+      // 特别注意，不能在此渲染。
+      // 原因： 
+      // 1. click 优先 change
+      // 2. 点击之后，render重写了innerHTML，onchange原本在click继续触发，但因为innerHTML被重写了。 change 也跟着消失了。
+      // console.log('click - render');
+      // render();
+    }
+
+    function removeMusicItem(id) {
+      data = data.filter( el => el.id != id);
+
+      console.log('remove - render');
+      render(createData(showType));
+    }
+
+    function collectMusicItem(id, collectOrNot) {
+      data.forEach( el => {
+        if(el.id == id) {
+           el.collect = collectOrNot;
+        }
+      });
+      
+      render(createData(showType));
+    }
+
+
+
+
+
+    // 批量删除音乐功能
+    removeSome.onclick = function() {
+      
+      if(data.length == 0) {
+        alert("没有任何音乐记录");
+      }
+      else {
+        data = data.filter(el => !el.checked );
+      }
+      
+      render(createData(showType));
+    }
+    
+
+
+    
+
+  </script>
+</body>
+
+</html>
