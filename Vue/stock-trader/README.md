@@ -1,18 +1,9 @@
 # stock-trader
 
-> A Vue.js project
+一个简单的股票模拟
 
-## Build Setup
-
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-```
-
-For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
+练习目标
+- Vue2
+- Vue-router
+- Vuex
+- 动画
