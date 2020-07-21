@@ -2,8 +2,8 @@
 
 A simple Todo app.
 
-Write it with Class and Hooks，see
-
+入坑练习：
+React 的 class 和 hooks 两个写法
 - /src/component/todo-class
 - /src/component/todo-hook
 
