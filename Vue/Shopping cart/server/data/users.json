@@ -1,0 +1,17 @@
+[
+    {
+        "username": "mt",
+        "password": 123,
+        "hasAdminRole": false
+    },
+    {
+        "username": "dahai",
+        "password": 123,
+        "hasAdminRole": false
+    },
+    {
+        "username": "admin",
+        "password": 123,
+        "hasAdminRole": true
+    }
+]
